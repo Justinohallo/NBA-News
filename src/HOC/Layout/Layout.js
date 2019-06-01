@@ -4,6 +4,7 @@ import './layout.css'
 // COMPONENTS
 
 import Header from '../../Components/Header/Header'
+import Footer from '../../Components/Footer/Footer'
 
 export class Layout extends Component {
 
@@ -26,7 +27,7 @@ export class Layout extends Component {
                 onOpenNav={()=> this.toggleSideNav(true)}
                 />
                 {this.props.children}
-                Footer
+                <Footer/>
             </div>
         )
     }
