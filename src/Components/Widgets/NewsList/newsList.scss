@@ -11,3 +11,15 @@
         color: #525252
     }
 }
+
+.newsList__wrapper{
+    box-sizing: border-box;
+    opacity: 0; 
+    transform: translateX(-100%);
+    transition: all .5s ease-in;
+
+    &Enter{
+        opacity:1;
+        transform: translateX(0%)
+    }
+}
