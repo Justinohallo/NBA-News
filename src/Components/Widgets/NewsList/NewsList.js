@@ -64,7 +64,10 @@ export class NewsList extends Component {
 
                 <div className={style.newsListItem}>
                               <Link to={`/articles/${item.id}`}>
-                                  <CardInfo/>> 
+                                  <CardInfo 
+                                  teams={this.state.teams}
+                                  team={item.team}
+                                  date={item.date}/>
                                   <h2> {item.title}</h2>
                               </Link>
               
@@ -73,6 +76,41 @@ export class NewsList extends Component {
           
             ));
             break;
+            case('cardMain'):
+            template = this.state.items.map((item, i) => (
+                <CSSTransition
+                classNames={{
+                    enter:style.newsList__wrapper,
+                    enterActive: style.newsList__wrapperEnter
+                }}
+                timeout={500}
+                key={i}
+            
+                > 
+                <Link to={`/articles/${item.id}`}>
+                    <div className={style.flex__wrapper}>
+                    <div className={style.left}
+                    style={{
+                        background:`url('/images/articles/${item.image}')`
+                    }}>
+                        <div> </div>
+
+                        </div>
+                        <div className={style.right}>
+                        <CardInfo 
+                                  teams={this.state.teams}
+                                  team={item.team}
+                                  date={item.date}/>
+                                  <h2> {item.title}</h2>
+                            </div>
+                        </div>
+                    
+                </Link> 
+                </CSSTransition>
+            ));
+            break;
+
+
             default: template= null
         }
         return template;

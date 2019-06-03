@@ -23,3 +23,33 @@
         transform: translateX(0%)
     }
 }
+
+.flex__wrapper{
+    display: flex; 
+    border-bottom: 2px solid #d5d5d5;
+    background: #fff;
+
+    & h2{
+        font-size: 12px; 
+        color: #555555
+    }
+}
+
+.left{
+    background-size: cover !important; 
+
+    & div{
+        width:90px; 
+        height:90px; 
+        background-size: 40px !important; 
+        background-repeat: no-repeat !important; 
+        background-position: center center !important;
+
+    }
+
+}
+
+.right{
+    flex-grow: 1; 
+    padding: 10px; 
+}
