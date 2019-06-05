@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import axios from 'axios'
+import {firebaseArticles, firebaseLooper} from '../../../firebase'
 
 import SliderTemplates from './SliderTemplates'
 
@@ -10,17 +10,14 @@ export class Slider extends Component {
     }
 
     componentWillMount(){
-        // Before the Render
-        axios.get(`http://localhost:3004/articles?_start=${this.props.start}&_end=${this.props.amount}`)
-        .then(response => {
-            this.setState({
-                news:response.data
-            })
+        firebaseArticles.limitToFirst(3).once('value')
+        .then((snapshot)=>{
+          const news = firebaseLooper(snapshot)
+            this.setState({news})
         })
     }
 
     render() {
-        console.log(this.state.news)
         return (
             <div>
                 <SliderTemplates data={this.state.news} type={this.props.type} settings={this.props.settings}/>
