@@ -7,6 +7,7 @@ import NewsArticle from './Components/Articles/News/Post/index'
 import VideoArticle from './Components/Articles/Videos/Video/Index'
 import NewsMain from "./Components/Articles/News/Main/index"
 import VideosMain from './Components/Articles/Videos/Main/index'
+import SignIn from './Components/SignIn/SignIn'
 
 
 // Components 
@@ -21,6 +22,7 @@ export class Routes extends Component {
                <Route path='/articles/:id' exact component={NewsArticle}/>
                <Route path='/videos/:id' exact component={VideoArticle}/>
                <Route path='/videos' exact component={VideosMain}/>
+               <Route path='/sign-in' exact component={SignIn}/>
                 </Switch>
             </Layout>
         )
