@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import {Link} from 'react-router-dom'
-import axios from 'axios'
-import {URL} from '../../../config'
+import {firebaseTeams, firebaseArticles, firebaseLooper} from '../../../firebase'
 import style from './newsList.scss'
 import Button from '../../Widgets/Buttons/Button'
 import CardInfo from '../../Widgets/Card Info/CardInfo'
@@ -23,27 +22,43 @@ export class NewsList extends Component {
     }
 
     request = (start, end) =>{
+     
         if(this.state.teams.length < 1){
-            axios.get(`${URL}/teams`)
-            .then(response => {
-                this.setState({
-                    teams:response.data
-                })
-            })
-        }
 
-
-        axios.get(`${URL}/articles?_start=${this.state.start}&_end=${this.state.end}`)
-        .then(response=> {
+        firebaseTeams.once('value')
+        .then((snapshot)=> {
+            const teams = firebaseLooper(snapshot)
+            console.log('Team Promise')
             this.setState({
-                items:[...this.state.items, ...response.data]
+                teams
             })
         })
     }
 
+        firebaseArticles.orderByChild('id').startAt(start).endAt(end).once('value')
+        .then((snapshot)=>{ 
+            const articles = firebaseLooper(snapshot);   
+            
+            this.setState({
+                items:[...this.state.items, ...articles],
+                start,
+                end})
+            console.log('Article Promise')
+     
+    }).catch(e=>{console.log(e)})
+       
+    
+
+
+    }
+
     loadMore = () => {
+      
         let end = this.state.end + this.state.amount;
-        this.request(this.state.end, end)
+        this.request(this.state.end + 1, end)
+
+       
+    
     }
  
     renderNews = (type) =>{

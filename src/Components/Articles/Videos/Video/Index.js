@@ -3,6 +3,8 @@ import axios from 'axios'
 import {URL} from '../../../../config'
 import Header from './Header'
 import VideoRelated from '../../../Widgets/VideoList/VideoRelated'
+import {firebaseDB, firebaseLooper, firebaseTeams, firebaseVideos} from '../../../../firebase'
+
 
 import styles from '../../articles.scss'
 
@@ -16,26 +18,44 @@ export class Index extends Component {
     }
 
     componentWillMount(){
-        axios.get(`${URL}/videos?id=${this.props.match.params.id}`)
-        .then(response => {
-            let article = response.data[0];
-            axios.get(`${URL}/teams?id=${article.team}`)
-            .then(response => {
+        firebaseDB.ref(`videos/${this.props.match.params.id}`).once('value')
+        .then((snapshot)=>{
+            let article = snapshot.val()
+            console.log(article)        
+            firebaseTeams.orderByChild('teamId').equalTo(article.team).once('value')
+            .then((snapshot)=>{
+                const team = firebaseLooper(snapshot)
                 this.setState({
-                    article, 
-                    team:response.data
+                    article,
+                    team
                 })
-                this.getRelated()
 
-            })
-           
+                this.getRelated()
+            }).catch((e)=>console.log)
         })
     }
 
     getRelated = () => {
+
+        firebaseTeams.once('value')
+        .then((snapshot)=>{
+            const teams = firebaseLooper(snapshot);
+
+            firebaseVideos
+            .orderByChild('team')
+            .equalTo(this.state.article.team)
+            .limitToFirst(3).once('value')
+            .then((snapshot)=>{
+                const related = firebaseLooper(snapshot);
+                this.setState({
+                    teams, 
+                    related
+                })
+            })
+        })
+
         axios.get(`${URL}/teams`)
         .then(response => {
-            
             let teams = response.data
             axios.get(`${URL}/videos/?q=${this.state.team[0].city}&_limit=3`)
             .then (response =>{

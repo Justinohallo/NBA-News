@@ -19,14 +19,14 @@ const Home = () => {
           loadMore={true}
           start={3}
         amount={3}/>
-        {/* <VideoList
+        <VideoList
         type='card'
         title={true}
         loadmore={true}
         start={0}
         amount={3}>
 
-        </VideoList> */}
+        </VideoList>
         </div>
     )
 }
