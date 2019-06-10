@@ -5,6 +5,21 @@ import style from './formFields.scss'
 
 const FormFields = ({formData, change, id}) => {
 
+
+    const showError = () => { 
+        let errorMessage = null; 
+
+        if(formData.validation && !formData.valid){
+            errorMessage = (
+                <div className={style.labelError}>
+                    {formData.validationMessage}
+                </div>
+            )
+        }
+
+        return errorMessage;
+    }
+
     const renderTemplate = () => {
         
         let formTemplate = null;
@@ -21,6 +36,7 @@ const FormFields = ({formData, change, id}) => {
                   onBlur={(event)=>{change({event,id,blur:true})}}
                   onChange={(event)=>{change({event,id,blur:false})}}> 
                   </input>
+                  {showError()}
                 </div>
             )
             break;

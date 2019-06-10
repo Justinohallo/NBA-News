@@ -1,47 +1,46 @@
 import React, { Component } from 'react'
-import style from './signIn.scss'
+import style from './dashboard.scss'
 import FormField from '../Widgets/FormFields/FormFields'
-import {firebase} from '../../firebase'
 
-export class SignIn extends Component {
 
-    state={
-        registerError: '',
+export class Dashboard extends Component {
+
+    state = {
+        postError: '',
         loading: false,
         formData:{
-            email:{
+            author:{
                 element:'input',
                 value:'',
                 config:{
-                    name:"email_input",
-                    type:'email',
-                    placeholder:'Enter your email'
+                    name:"author_input",
+                    type:'text',
+                    placeholder:'Enter your name'
                 },
                 validation:{
                     required:true,
-                    email:true
                 },
                 valid:false,
                 touched:false,
                 validationMessage:''
             },
-            password:{
+            title:{
                 element:'input',
                 value:'',
                 config:{
-                    name:"password_input",
-                    type:'password',
-                    placeholder:'Enter your password'
+                    name:"title_input",
+                    type:'text',
+                    placeholder:'Enter the Title'
                 },
                 validation:{
                     required:true,
-                    password:true
                 },
                 valid:false,
                 touched:false,
                 validationMessage:''
             }
         }
+
     }
 
     updateForm = (element) => {
@@ -82,11 +81,6 @@ export class SignIn extends Component {
 
         let error = [ true, ''];
 
-        if(element.validation.email){
-            const valid = /\S+@\S+\.\S+/.test(element.value)
-            const message = `${!valid ? 'Must Be a Valid Email' : ''}`
-            error = !valid ? [valid, message] : error
-        }
 
         if(element.validation.required){
             const valid = element.value.trim() !== '';
@@ -94,22 +88,24 @@ export class SignIn extends Component {
             error = !valid ? [valid, message] : error
         }
 
-        if(element.validation.password){
-            
-            const valid = element.value.length >= 5
-            const message = `${!valid ? 'Must Be Greater than 5' : ''}`
-            error = !valid ? [valid, message] : error
-        }
-
         return error
 
     }
 
-    submitForm = (event, type) => { 
-        event.preventDefault();
+    renderSubmitButton = () => (
+        this.state.loading ? 
+        'Loading ...' 
+        : 
+        <div> 
+            <button type='submit' > Add Post</button>
+            
+        </div>
 
-        if(type !== null) {
-            let dataToSubmit = {};
+    )
+
+    submitForm = (event) => { 
+        event.preventDefault();
+        let dataToSubmit = {};
             let formIsValid = true
 
             for(let key in this.state.formData){
@@ -119,85 +115,48 @@ export class SignIn extends Component {
                 formIsValid = this.state.formData[key].valid && formIsValid;
             }
 
+            console.log(dataToSubmit)
+
             if(formIsValid){
+                console.log('Submit Post')
+            } else {
                 this.setState({
-                    loading:true,
-                    registerError:''
+                    postError:'Something Went Wrong'
                 })
-                if(type){
-                   firebase.auth()
-                   .signInWithEmailAndPassword(
-                    dataToSubmit.email, 
-                    dataToSubmit.password
-                   ).then(()=> {
-                    this.props.history.push('/')
-                   })
-                   .catch((error) =>{
-                    this.setState({
-                        loading:false,
-                        registerError:error.message
-                    })
-                })
-                } else {
-
-                   firebase.auth()
-                   .createUserWithEmailAndPassword(dataToSubmit.email, dataToSubmit.password)
-                   .then(()=>{
-                       this.props.history.push('/')
-                   })
-                   .catch((error) =>{
-                       this.setState({
-                           loading:false,
-                           registerError:error.message
-                       })
-                   })
-                }
             }
-        }
-
 
     }
 
-    renderSubmitButton = () => (
-        this.state.loading ? 
-        'Loading ...' 
-        : 
-        <div> 
-            <button onClick={(event) => this.submitForm(event, false)} > Register Now</button>
-            <button onClick={(event) => this.submitForm(event, true)}> Log In </button>
-        </div>
-
-    )
-
     renderErrorMessage = () => (
         this.state.registerError !== '' ? 
-        <div className='showError'> {this.state.registerError}</div>
+        <div className='showError'> {this.state.postError}</div>
         : ''
     )
 
-
-
     render() {
         return (
-            <div className={style.logContainer}>
-                <form onSubmit={(event) => this.submitForm(event, null)}>
-                    <h2>Register / Log In </h2>
+            <div className={style.postContainer}>
+                <form onSubmit={this.submitForm}>
+            <h2> Add Post</h2>
+            Dashboard
                     <FormField
-                    id={'email'}
-                    formData={this.state.formData.email}
+                    id={'author'}
+                    formData={this.state.formData.author}
                     change={(element)=>this.updateForm(element)}/>
 
                     <FormField
-                    id={'password'}
-                    formData={this.state.formData.password}
-                    change={(element)=>this.updateForm(element)}/>
+                    id={'title'}
+                    formData={this.state.formData.title}
+                    change={(element)=>this.updateForm(element)}/>      
 
-                </form>
-                {this.renderSubmitButton()}
-                {this.renderErrorMessage()}
+                     {this.renderSubmitButton()}
+                     {this.renderErrorMessage()}
+            </form>
+                
             </div>
         )
     }
 }
 
-export default SignIn
+export default Dashboard
+
