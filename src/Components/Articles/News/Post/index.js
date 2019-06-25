@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
-import {firebaseDB, firebaseLooper, firebaseTeams} from '../../../../firebase'
+import {firebase, firebaseDB, firebaseLooper, firebaseTeams} from '../../../../firebase'
 
 import styles from '../../articles.scss'
 import Header from './Header'
-
 
 export class index extends Component {
 
     state ={
         article:[],
-        team:[]
+        team:[],
+        imageURL:''
     }
 
     componentWillMount(){
         firebaseDB.ref(`articles/${this.props.match.params.id}`).once('value')
         .then((snapshot)=>{
             let article = snapshot.val()
-            console.log(article)        
+                 
             firebaseTeams.orderByChild('teamId').equalTo(article.team).once('value')
             .then((snapshot)=>{
                 const team = firebaseLooper(snapshot)
@@ -24,9 +24,23 @@ export class index extends Component {
                     article,
                     team
                 })
+                this.getImageURL(article.image)
             }).catch((e)=>console.log)
         })
     }
+
+    getImageURL = (filename) =>{
+        firebase.storage().ref('images')
+        .child(filename).getDownloadURL()
+        .then( url => {
+            console.log(url)
+            this.setState({
+                imageURL: url
+            })
+        })
+    }
+
+    
     render() {
        const article = this.state.article
        const team = this.state.team
@@ -44,10 +58,15 @@ export class index extends Component {
                     <h1> {article.title} </h1>
                     <div className={styles.articleImage}
                     style={{
-                        background:`url(../images/articles/${article.image})`
+                        background:`url(${this.state.imageURL})`
                     }}>
                         </div>
-                        <div className={styles.articleText}> {article.body} </div>
+                        <div className={styles.articleText}
+                        dangerouslySetInnerHTML={{
+                            __html:article.body
+                        }}
+                        > 
+                         </div>
                     </div>
                     
             </div>

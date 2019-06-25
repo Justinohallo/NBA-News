@@ -28,7 +28,7 @@ export class NewsList extends Component {
         firebaseTeams.once('value')
         .then((snapshot)=> {
             const teams = firebaseLooper(snapshot)
-            console.log('Team Promise')
+            
             this.setState({
                 teams
             })
@@ -43,7 +43,7 @@ export class NewsList extends Component {
                 items:[...this.state.items, ...articles],
                 start,
                 end})
-            console.log('Article Promise')
+            
      
     }).catch(e=>{console.log(e)})
        

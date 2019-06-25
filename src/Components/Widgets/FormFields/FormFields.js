@@ -50,7 +50,7 @@ const FormFields = ({formData, change, id}) => {
                     onChange={(event)=>{change({event,id,blur:false})}}
                     > 
                     {formData.config.options.map((item, i) =>(
-                        <option key={i} value={item}> {item.name} </option>
+                        <option key={i} value={item.id}> {item.name} </option>
                     ))}
                     </select>
                 </div>
